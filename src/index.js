@@ -143,16 +143,17 @@ function renderHTML(initialData) {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Tavi & Ellis</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #F4F5F7;
+      --bg: #F3F4F6;
       --card: #FFFFFF;
       --border: #E5E7EB;
+      --border-strong: #D1D5DB;
       --text: #111827;
       --muted: #6B7280;
       --mum-bg: #FDF2F8;
@@ -185,32 +186,36 @@ function renderHTML(initialData) {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
     }
 
     .topbar {
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
+      padding: 10px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
     }
 
     .title-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       letter-spacing: -0.02em;
       margin: 0;
@@ -218,17 +223,18 @@ function renderHTML(initialData) {
 
     .kid-badges {
       display: flex;
-      gap: 6px;
+      gap: 5px;
     }
 
     .kid-pill {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
+      white-space: nowrap;
     }
 
     .kid-pill.tavi {
@@ -243,10 +249,47 @@ function renderHTML(initialData) {
       border: 1px solid var(--ellis-border);
     }
 
+    /* Day Jump Strip for Portrait Mobile */
+    .day-strip {
+      display: flex;
+      gap: 4px;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      padding: 6px 12px;
+      position: sticky;
+      top: 45px;
+      z-index: 45;
+    }
+
+    .day-tab {
+      flex: 1;
+      text-align: center;
+      padding: 6px 4px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .day-tab.active {
+      background: #111827;
+      color: #FFFFFF;
+    }
+
+    .day-tab.today:not(.active) {
+      border-color: #111827;
+      color: #111827;
+    }
+
     .actions-right {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-shrink: 0;
     }
 
     .sync-dot {
@@ -266,50 +309,61 @@ function renderHTML(initialData) {
       background: #F3F4F6;
       border: 1px solid var(--border);
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 6px 10px;
-      border-radius: 8px;
+      padding: 5px 9px;
+      border-radius: 7px;
       cursor: pointer;
     }
 
-    .reset-btn:active {
-      background: #E5E7EB;
+    /* Calendar Board — Side-Scrolling in Portrait, Full 5-Column Grid in Landscape / Desktop */
+    .calendar-wrap {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .grid {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 14px;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap: 12px;
+      padding: 12px 14px 24px 14px;
+      scrollbar-width: none;
+      align-items: stretch;
+      flex: 1;
     }
 
-    @media (min-width: 980px) {
-      .grid {
-        grid-template-columns: repeat(5, 1fr);
-        align-items: start;
-      }
+    .grid::-webkit-scrollbar {
+      display: none;
     }
 
     .day-card {
+      flex: 0 0 84vw;
+      max-width: 340px;
+      scroll-snap-align: center;
       background: var(--card);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-strong);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-      transition: border-color 0.2s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
     }
 
     .day-card.today {
       border: 2px solid #111827;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
     }
 
     .day-header {
-      padding: 12px 14px;
-      background: #FAFAFA;
+      padding: 11px 14px;
+      background: #F9FAFB;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
@@ -328,28 +382,33 @@ function renderHTML(initialData) {
       letter-spacing: -0.01em;
     }
 
+    .day-short {
+      display: none;
+    }
+
     .today-tag {
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 10px;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.22);
       color: #FFFFFF;
-      padding: 2px 7px;
-      border-radius: 6px;
+      padding: 2px 6px;
+      border-radius: 5px;
     }
 
     .day-body {
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
+      flex: 1;
     }
 
     .slot-box {
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 10px;
+      padding: 9px;
       background: #F9FAFB;
     }
 
@@ -357,18 +416,20 @@ function renderHTML(initialData) {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
+      gap: 4px;
     }
 
     .slot-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: #374151;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
+      white-space: nowrap;
     }
 
     .quick-both {
@@ -377,14 +438,15 @@ function renderHTML(initialData) {
     }
 
     .both-btn {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      padding: 3px 8px;
+      padding: 3px 6px;
       border-radius: 6px;
       border: 1px solid var(--border);
       background: #FFFFFF;
       color: var(--muted);
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .both-btn.active-mum {
@@ -402,7 +464,7 @@ function renderHTML(initialData) {
     .kid-rows {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .kid-row {
@@ -411,8 +473,9 @@ function renderHTML(initialData) {
       justify-content: space-between;
       background: #FFFFFF;
       border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 6px 8px;
+      border-radius: 8px;
+      padding: 5px 8px;
+      gap: 4px;
     }
 
     .kid-label {
@@ -421,13 +484,15 @@ function renderHTML(initialData) {
       display: flex;
       align-items: center;
       gap: 5px;
+      white-space: nowrap;
     }
 
     .kid-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 999px;
       display: inline-block;
+      flex-shrink: 0;
     }
 
     .kid-dot.tavi { background: var(--tavi-text); }
@@ -441,13 +506,13 @@ function renderHTML(initialData) {
     .p-btn {
       font-size: 12px;
       font-weight: 700;
-      padding: 5px 11px;
-      border-radius: 7px;
+      padding: 5px 10px;
+      border-radius: 6px;
       border: 1px solid var(--border);
       background: #F9FAFB;
       color: #4B5563;
       cursor: pointer;
-      min-width: 52px;
+      min-width: 48px;
       text-align: center;
       transition: all 0.12s ease;
     }
@@ -467,18 +532,19 @@ function renderHTML(initialData) {
     .activities-section {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
+      flex: 1;
     }
 
     .activities-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 2px;
+      padding: 2px 2px 0 2px;
     }
 
     .activities-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -489,48 +555,53 @@ function renderHTML(initialData) {
       background: #111827;
       color: #FFFFFF;
       border: none;
-      border-radius: 7px;
-      font-size: 12px;
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 4px 9px;
+      padding: 4px 8px;
       cursor: pointer;
     }
 
     .act-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .act-card {
       background: #FFFFFF;
       border: 1px solid var(--border);
-      border-radius: 11px;
-      padding: 9px 10px;
+      border-left: 3px solid #9CA3AF;
+      border-radius: 9px;
+      padding: 7px 8px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 6px;
     }
+
+    .act-card.kid-tavi { border-left-color: var(--tavi-text); }
+    .act-card.kid-ellis { border-left-color: var(--ellis-text); }
+    .act-card.kid-both { border-left-color: var(--both-text); }
 
     .act-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      gap: 6px;
+      gap: 4px;
     }
 
     .act-info {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .act-kid-badge {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 6px;
+      padding: 2px 6px;
+      border-radius: 5px;
       cursor: pointer;
       user-select: none;
     }
@@ -554,50 +625,49 @@ function renderHTML(initialData) {
     }
 
     .act-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text);
     }
 
     .act-time {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       color: var(--muted);
+      background: #F3F4F6;
+      padding: 1px 5px;
+      border-radius: 4px;
     }
 
     .act-del {
       background: transparent;
       border: none;
       color: #9CA3AF;
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1;
-      padding: 2px 4px;
+      padding: 0 3px;
       cursor: pointer;
-    }
-
-    .act-del:hover {
-      color: #EF4444;
     }
 
     .act-runs {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 5px;
     }
 
     .act-run-col {
       background: #F9FAFB;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 5px 6px;
+      border-radius: 7px;
+      padding: 4px 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 4px;
+      gap: 3px;
     }
 
     .act-run-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: var(--muted);
     }
@@ -608,9 +678,9 @@ function renderHTML(initialData) {
     }
 
     .m-btn {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 7px;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 6px;
       border-radius: 5px;
       border: 1px solid var(--border);
       background: #FFFFFF;
@@ -633,11 +703,11 @@ function renderHTML(initialData) {
     .act-form {
       background: #F9FAFB;
       border: 1px solid #D1D5DB;
-      border-radius: 11px;
-      padding: 10px;
+      border-radius: 10px;
+      padding: 8px;
       display: none;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .act-form.open {
@@ -646,26 +716,27 @@ function renderHTML(initialData) {
 
     .form-row {
       display: flex;
-      gap: 6px;
+      gap: 5px;
     }
 
     .input-text {
       flex: 1;
-      padding: 7px 9px;
+      min-width: 0;
+      padding: 6px 8px;
       border: 1px solid var(--border);
-      border-radius: 7px;
-      font-size: 13px;
+      border-radius: 6px;
+      font-size: 12px;
       font-family: inherit;
       font-weight: 600;
       outline: none;
     }
 
     .input-time {
-      width: 90px;
-      padding: 7px 9px;
+      width: 78px;
+      padding: 6px 7px;
       border: 1px solid var(--border);
-      border-radius: 7px;
-      font-size: 13px;
+      border-radius: 6px;
+      font-size: 12px;
       font-family: inherit;
       font-weight: 600;
       outline: none;
@@ -675,11 +746,11 @@ function renderHTML(initialData) {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 4px;
     }
 
     .seg-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: var(--muted);
       text-transform: uppercase;
@@ -687,14 +758,14 @@ function renderHTML(initialData) {
 
     .seg-group {
       display: flex;
-      gap: 4px;
+      gap: 3px;
     }
 
     .seg-btn {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 5px 9px;
-      border-radius: 6px;
+      padding: 4px 7px;
+      border-radius: 5px;
       border: 1px solid var(--border);
       background: #FFFFFF;
       color: #374151;
@@ -720,7 +791,7 @@ function renderHTML(initialData) {
     .form-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 6px;
+      gap: 5px;
       margin-top: 2px;
     }
 
@@ -728,10 +799,10 @@ function renderHTML(initialData) {
       background: #FFFFFF;
       border: 1px solid var(--border);
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 6px 11px;
-      border-radius: 7px;
+      padding: 5px 9px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
@@ -739,11 +810,130 @@ function renderHTML(initialData) {
       background: #111827;
       border: 1px solid #111827;
       color: #FFFFFF;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      padding: 6px 13px;
-      border-radius: 7px;
+      padding: 5px 11px;
+      border-radius: 6px;
       cursor: pointer;
+    }
+
+    /* Full-Week 5-Column Calendar View in Phone Landscape & Desktop */
+    @media (orientation: landscape), (min-width: 900px) {
+      .day-strip {
+        display: none;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        overflow-x: visible;
+        scroll-snap-type: none;
+        gap: 8px;
+        padding: 10px 12px 18px 12px;
+        max-width: 1440px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .day-card {
+        flex: none;
+        width: 100%;
+        max-width: none;
+        border-radius: 12px;
+      }
+    }
+
+    /* Compact adjustments specifically for Phone Landscape (narrower 5-column fit) */
+    @media (orientation: landscape) and (max-width: 960px) {
+      .topbar {
+        padding: 6px 10px;
+      }
+      .title {
+        font-size: 14px;
+      }
+      .grid {
+        gap: 6px;
+        padding: 6px 8px 12px 8px;
+      }
+      .day-header {
+        padding: 7px 9px;
+      }
+      .day-name {
+        display: none;
+      }
+      .day-short {
+        display: inline;
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .today-tag {
+        font-size: 9px;
+        padding: 1px 4px;
+      }
+      .day-body {
+        padding: 6px;
+        gap: 6px;
+      }
+      .slot-box {
+        padding: 6px;
+        border-radius: 9px;
+      }
+      .slot-header {
+        margin-bottom: 4px;
+      }
+      .slot-title {
+        font-size: 10px;
+      }
+      .both-btn {
+        font-size: 9px;
+        padding: 2px 4px;
+      }
+      .kid-rows {
+        gap: 4px;
+      }
+      .kid-row {
+        padding: 3px 5px;
+      }
+      .kid-label {
+        font-size: 11px;
+        gap: 3px;
+      }
+      .p-btn {
+        font-size: 10px;
+        padding: 3px 6px;
+        min-width: 34px;
+      }
+      .activities-title {
+        font-size: 10px;
+      }
+      .add-act-btn {
+        font-size: 10px;
+        padding: 2px 6px;
+      }
+      .act-card {
+        padding: 5px 6px;
+        gap: 4px;
+      }
+      .act-name {
+        font-size: 11px;
+      }
+      .act-time {
+        font-size: 10px;
+      }
+      .act-kid-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+      }
+      .act-run-col {
+        padding: 3px 4px;
+      }
+      .act-run-label {
+        font-size: 9px;
+      }
+      .m-btn {
+        font-size: 9px;
+        padding: 2px 4px;
+      }
     }
   </style>
 </head>
@@ -762,21 +952,36 @@ function renderHTML(initialData) {
     </div>
   </header>
 
-  <main id="scheduleGrid" class="grid"></main>
+  <nav id="dayStrip" class="day-strip"></nav>
+
+  <div class="calendar-wrap">
+    <main id="scheduleGrid" class="grid"></main>
+  </div>
 
   <script>
     var state = ${initialJson};
     var openForms = {};
     var formDrafts = {};
     var isSaving = false;
+    var activeDayKey = 'mon';
 
     var DAYS = [
-      { key: 'mon', label: 'Monday', jsDay: 1 },
-      { key: 'tue', label: 'Tuesday', jsDay: 2 },
-      { key: 'wed', label: 'Wednesday', jsDay: 3 },
-      { key: 'thu', label: 'Thursday', jsDay: 4 },
-      { key: 'fri', label: 'Friday', jsDay: 5 }
+      { key: 'mon', label: 'Monday', short: 'Mon', jsDay: 1 },
+      { key: 'tue', label: 'Tuesday', short: 'Tue', jsDay: 2 },
+      { key: 'wed', label: 'Wednesday', short: 'Wed', jsDay: 3 },
+      { key: 'thu', label: 'Thursday', short: 'Thu', jsDay: 4 },
+      { key: 'fri', label: 'Friday', short: 'Fri', jsDay: 5 }
     ];
+
+    (function initActiveDay() {
+      var d = new Date().getDay();
+      for (var i = 0; i < DAYS.length; i++) {
+        if (DAYS[i].jsDay === d) {
+          activeDayKey = DAYS[i].key;
+          break;
+        }
+      }
+    })();
 
     function escapeHtml(str) {
       return String(str || '')
@@ -817,7 +1022,6 @@ function renderHTML(initialData) {
 
     async function pollState() {
       if (isSaving) return;
-      // Do not overwrite while typing in an open activity form
       for (var k in openForms) {
         if (openForms[k]) return;
       }
@@ -830,6 +1034,19 @@ function renderHTML(initialData) {
           render();
         }
       } catch (e) {}
+    }
+
+    function scrollToDay(dayKey, smooth) {
+      activeDayKey = dayKey;
+      renderDayStrip();
+      var card = document.getElementById('day-card-' + dayKey);
+      var grid = document.getElementById('scheduleGrid');
+      if (!card || !grid) return;
+      card.scrollIntoView({
+        behavior: smooth ? 'smooth' : 'auto',
+        block: 'nearest',
+        inline: 'center'
+      });
     }
 
     function toggleParent(dayKey, slot, kid, parent) {
@@ -960,8 +1177,8 @@ function renderHTML(initialData) {
         '<div class="slot-header">' +
           '<div class="slot-title"><span>' + icon + '</span> ' + slotLabel + '</div>' +
           '<div class="quick-both">' +
-            '<button class="both-btn ' + (bothMum ? 'active-mum' : '') + '" onclick="setBothParent(\\x27' + dayKey + '\\x27, \\x27' + slotKey + '\\x27, \\x27mum\\x27)">Both Mum</button>' +
-            '<button class="both-btn ' + (bothDad ? 'active-dad' : '') + '" onclick="setBothParent(\\x27' + dayKey + '\\x27, \\x27' + slotKey + '\\x27, \\x27dad\\x27)">Both Dad</button>' +
+            '<button class="both-btn ' + (bothMum ? 'active-mum' : '') + '" onclick="setBothParent(\\x27' + dayKey + '\\x27, \\x27' + slotKey + '\\x27, \\x27mum\\x27)">Both M</button>' +
+            '<button class="both-btn ' + (bothDad ? 'active-dad' : '') + '" onclick="setBothParent(\\x27' + dayKey + '\\x27, \\x27' + slotKey + '\\x27, \\x27dad\\x27)">Both D</button>' +
           '</div>' +
         '</div>' +
         '<div class="kid-rows">' +
@@ -987,7 +1204,7 @@ function renderHTML(initialData) {
       var list = state.days[dayKey].activities || [];
       var cardsHtml = list.map(function(act) {
         var kidLabel = act.kids === 'tavi' ? 'Tavi' : (act.kids === 'ellis' ? 'Ellis' : 'Both');
-        return '<div class="act-card">' +
+        return '<div class="act-card kid-' + act.kids + '">' +
           '<div class="act-top">' +
             '<div class="act-info">' +
               '<span class="act-kid-badge ' + act.kids + '" onclick="cycleActivityKids(\\x27' + dayKey + '\\x27, \\x27' + act.id + '\\x27)">' + kidLabel + '</span>' +
@@ -1020,7 +1237,7 @@ function renderHTML(initialData) {
 
       var formHtml = '<div class="act-form ' + (isOpen ? 'open' : '') + '">' +
         '<div class="form-row">' +
-          '<input id="act-title-' + dayKey + '" class="input-text" type="text" placeholder="Activity (e.g. Swimming)" value="' + escapeHtml(draft.title) + '" oninput="updateDraftInput(\\x27' + dayKey + '\\x27, \\x27title\\x27, this.value)" onkeydown="if(event.key===\\x27Enter\\x27)saveActivity(\\x27' + dayKey + '\\x27)" />' +
+          '<input id="act-title-' + dayKey + '" class="input-text" type="text" placeholder="Activity" value="' + escapeHtml(draft.title) + '" oninput="updateDraftInput(\\x27' + dayKey + '\\x27, \\x27title\\x27, this.value)" onkeydown="if(event.key===\\x27Enter\\x27)saveActivity(\\x27' + dayKey + '\\x27)" />' +
           '<input id="act-time-' + dayKey + '" class="input-time" type="text" placeholder="Time" value="' + escapeHtml(draft.time) + '" oninput="updateDraftInput(\\x27' + dayKey + '\\x27, \\x27time\\x27, this.value)" onkeydown="if(event.key===\\x27Enter\\x27)saveActivity(\\x27' + dayKey + '\\x27)" />' +
         '</div>' +
         '<div class="seg-row">' +
@@ -1061,16 +1278,33 @@ function renderHTML(initialData) {
       '</div>';
     }
 
+    function renderDayStrip() {
+      var strip = document.getElementById('dayStrip');
+      if (!strip) return;
+      var currentDay = new Date().getDay();
+      strip.innerHTML = DAYS.map(function(d) {
+        var isToday = (currentDay === d.jsDay);
+        var isActive = (activeDayKey === d.key);
+        return '<button class="day-tab ' + (isActive ? 'active ' : '') + (isToday ? 'today' : '') + '" onclick="scrollToDay(\\x27' + d.key + '\\x27, true)">' +
+          d.short +
+        '</button>';
+      }).join('');
+    }
+
     function render() {
       var grid = document.getElementById('scheduleGrid');
       if (!grid) return;
+      var prevScroll = grid.scrollLeft;
       var currentDay = new Date().getDay();
+
+      renderDayStrip();
 
       grid.innerHTML = DAYS.map(function(d) {
         var isToday = (currentDay === d.jsDay);
-        return '<section class="day-card ' + (isToday ? 'today' : '') + '">' +
+        return '<section id="day-card-' + d.key + '" class="day-card ' + (isToday ? 'today' : '') + '">' +
           '<div class="day-header">' +
             '<span class="day-name">' + d.label + '</span>' +
+            '<span class="day-short">' + d.short + '</span>' +
             (isToday ? '<span class="today-tag">Today</span>' : '') +
           '</div>' +
           '<div class="day-body">' +
@@ -1080,9 +1314,46 @@ function renderHTML(initialData) {
           '</div>' +
         '</section>';
       }).join('');
+
+      grid.scrollLeft = prevScroll;
+    }
+
+    // Track horizontal scroll in portrait mode to highlight current day tab
+    function attachScrollListener() {
+      var grid = document.getElementById('scheduleGrid');
+      if (!grid) return;
+      var scrollTimer = null;
+      grid.addEventListener('scroll', function() {
+        if (scrollTimer) clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function() {
+          var center = grid.scrollLeft + grid.clientWidth / 2;
+          var closestKey = activeDayKey;
+          var minDist = Infinity;
+          for (var i = 0; i < DAYS.length; i++) {
+            var k = DAYS[i].key;
+            var el = document.getElementById('day-card-' + k);
+            if (el) {
+              var elCenter = el.offsetLeft + el.offsetWidth / 2;
+              var dist = Math.abs(center - elCenter);
+              if (dist < minDist) {
+                minDist = dist;
+                closestKey = k;
+              }
+            }
+          }
+          if (closestKey !== activeDayKey) {
+            activeDayKey = closestKey;
+            renderDayStrip();
+          }
+        }, 60);
+      }, { passive: true });
     }
 
     render();
+    attachScrollListener();
+    setTimeout(function() {
+      scrollToDay(activeDayKey, false);
+    }, 50);
     setInterval(pollState, 5000);
     document.addEventListener('visibilitychange', function() {
       if (!document.hidden) pollState();
