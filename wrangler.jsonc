@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kids-schedule",
+  "main": "src/index.js",
+  "compatibility_date": "2026-01-01",
+  "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "kids.eggbot.net",
+      "custom_domain": true
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KIDS_SCHEDULE_DATA",
+      "id": "74800ab2c0644951945baa140089d56c"
+    }
+  ]
+}
